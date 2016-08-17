@@ -15,6 +15,7 @@
  */
 package com.guilin.flume.ng.source.rocketmq;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.client.consumer.MQPullConsumer;
 import com.alibaba.rocketmq.client.consumer.PullResult;
 import com.alibaba.rocketmq.client.consumer.PullStatus;
@@ -36,6 +37,7 @@ import org.apache.flume.source.AbstractSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +88,16 @@ public class RocketMQSource extends AbstractSource implements Configurable, Poll
                         Map<String, String> headers = new HashMap<String, String>();
                         headers.put(topicHeaderName, messageExt.getTopic());
                         headers.put(tagsHeaderName, messageExt.getTags());
+
+                        //业务时间timestamp
+                        String body = new String(messageExt.getBody(), Charset.defaultCharset());
+                        Map<String, Object> map = JSON.parseObject(body, Map.class);
+                        if (map.containsKey("timestamp")) {
+                            headers.put("timestamp", map.get("timestamp").toString());
+                        } else {
+                            headers.put("timestamp", System.currentTimeMillis() + "");
+                        }
+
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("MessageQueue={}, Topic={}, Tags={}, Message: {}", new Object[]{
                                     mq, messageExt.getTopic(), messageExt.getTags(), messageExt.getBody()});

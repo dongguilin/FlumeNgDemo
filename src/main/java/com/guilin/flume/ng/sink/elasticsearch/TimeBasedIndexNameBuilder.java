@@ -25,6 +25,8 @@ import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.conf.ComponentConfiguration;
 import org.apache.flume.formatter.output.BucketPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.TimeZone;
 
@@ -34,6 +36,8 @@ import java.util.TimeZone;
  */
 public class TimeBasedIndexNameBuilder implements
         IndexNameBuilder {
+
+    private static final Logger logger = LoggerFactory.getLogger(TimeBasedIndexNameBuilder.class);
 
     public static final String DATE_FORMAT = "dateFormat";
     public static final String TIME_ZONE = "timeZone";
